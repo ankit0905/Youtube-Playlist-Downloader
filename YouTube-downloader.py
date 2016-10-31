@@ -1,6 +1,6 @@
 import sys, imp, os
 
-def check_module(libs):
+def check_module(libs = []):
     """Check if the list of modules is available. 
     
     If not, first install the modules using pip.
@@ -33,25 +33,32 @@ def parse(url):
 
 def download_videos(links, loc):
     """ Download the video in the lowest mp4 quality available and store it in a folder.
+        Age-restricted videos are ignored.
     """
     ct=0
     for link in links:
         ct=ct+1
-        yt = YouTube(link)
-        yt.set_filename(yt.filename+str(ct))
-        print(yt.filename)
-        video = yt.filter('mp4')[0]
-        #loc="C:/Users/some_user/Documents/videos"
-        video.download(loc)
-        print "Download done."
+        try:
+            yt = YouTube(link)
+            yt.set_filename(yt.filename+str(ct))
+            print(yt.filename)
+            video = yt.filter('mp4')[0]
+            video.download(loc)
+            print "Download done."
+        except:
+            continue
 
 if __name__ == '__main__':
     """ Command line argument expected : Link to the Youtube Playlist (To be downloaded)"""
-    check_module(['bs4', 'requests', 'pytube'])
+    url = str(sys.argv[1])
+    url.replace('&', '^&')
+    print url
+    modules = ['bs4', 'requests', 'pytube']
+    #print modules
+    check_module(modules)
     from bs4 import BeautifulSoup
     from pytube import YouTube
     import requests 
-    url = str(sys.argv[1])
     my_links = parse(url)
     location = "C:/Users/swamiji/Documents/ANKIT/python/bs4/video1"
     download_videos(my_links, location)
