@@ -1,22 +1,10 @@
 import sys, imp, os
-
-def check_module(libs = []):
-    """Check if the list of modules is available. 
-    
-    If not, first install the modules using pip.
-    """
-    for lib in libs:
-        try:
-            imp.find_module(lib)
-            found = True
-        except ImportError:
-            found = False
-        if not found:
-            os.system('pip install ' + lib)
+from bs4 import BeautifulSoup
+from pytube import YouTube
+import requests 
 
 def parse(url):
     """ Parse a youtube playlist page to extract links of all videos and return the links as a list.
-        
     The url of the playlist will be given as input to the function.
     """
     r = requests.get(url)
@@ -51,16 +39,11 @@ def download_videos(links, loc):
 if __name__ == '__main__':
     """ Command line argument expected : Link to the Youtube Playlist (To be downloaded)"""
     url = str(sys.argv[1])
-    url.replace('&', '^&')
-    print url
-    modules = ['bs4', 'requests', 'pytube']
-    #print modules
-    check_module(modules)
-    from bs4 import BeautifulSoup
-    from pytube import YouTube
-    import requests 
+    #print url
     my_links = parse(url)
-    location = "C:/Users/swamiji/Documents/ANKIT/python/bs4/video1"
+    #location = "C:/Users/swamiji/Documents/ANKIT/python/bs4/video1"
+    location = str(sys.argv[2])
+    location.replace('\\', '/')
     download_videos(my_links, location)
     
     
