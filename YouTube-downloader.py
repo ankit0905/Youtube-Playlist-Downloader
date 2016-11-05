@@ -31,6 +31,7 @@ def download_videos(links, loc):
             yt.set_filename(yt.filename+str(ct))
             print(yt.filename)
             video = yt.filter('mp4')[0]
+            print "Downloading......."
             video.download(loc)
             print "Download done."
         except:
@@ -39,9 +40,7 @@ def download_videos(links, loc):
 if __name__ == '__main__':
     """ Command line argument expected : Link to the Youtube Playlist (To be downloaded)"""
     url = str(sys.argv[1])
-    #print url
     my_links = parse(url)
-    #location = "C:/Users/swamiji/Documents/ANKIT/python/bs4/video1"
     location = str(sys.argv[2])
     location.replace('\\', '/')
     download_videos(my_links, location)
