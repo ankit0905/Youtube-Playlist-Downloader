@@ -33,19 +33,16 @@ def download_videos(links, loc):
         Age-restricted videos are ignored.
     """
     for link in links:
-        try:
-            yt = YouTube(link)
-            yt.set_filename(yt.filename)
-            print(yt.filename)
-            if downloaded(loc,yt.filename) == True:
-                print "Already Downloaded"
-                continue
-            video = yt.filter('mp4')[0]
-            print "Downloading......."
-            video.download(loc)
-            print "Download done."  
-        except:
+        yt = YouTube(link)
+        yt.set_filename(yt.filename)
+        print(yt.filename)
+        if downloaded(loc,yt.filename):
+            print "Already Downloaded"
             continue
+        video = yt.filter('mp4')[0]
+        print "Downloading......."
+        #video.download(loc)
+        print "Download done."  
 
 if __name__ == '__main__':
     """ Two Command line arguments expected :
