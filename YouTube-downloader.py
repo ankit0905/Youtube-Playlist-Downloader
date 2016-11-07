@@ -5,9 +5,10 @@ import requests
 
 def downloaded(loc, filename):
     """ Check if the video is already downloaded in the required folder OR not.
+        There is some code that takes care of some encoding issues.
     """
     filenames = os.listdir(loc)
-    filename = str(filename.encode('ascii','ignore'))
+    filename = str(filename.encode('utf-8','ignore'))
     search_file=''
     for ch in filename:
         if ch.isalpha() or ch.isdigit():
@@ -17,7 +18,7 @@ def downloaded(loc, filename):
         for ch in _file:
             if ch.isalpha() or ch.isdigit():
                 file_present=file_present+ch
-        if search_file in file_present:
+        if str(search_file) in str(file_present):
             return True
     return False
  
@@ -41,23 +42,22 @@ def download_videos(links, loc):
         
         The Downloading resumes if there was any interruption last time.
     """
-    print 
-    print "Press Ctrl+Z for stopping downloads at any moment.\n"
+    print "\nPress Ctrl+Z for stopping downloads at any moment.\n"
     print "DOWNLOADING " + str(len(links)) + " VIDEOS \n"
     ct=0
     for link in links:
-        ct=ct+1
         try:
+            ct=ct+1
             yt = YouTube(link)
             yt.set_filename(yt.filename)
-            print "Video #" + str(ct) + ": \t"+ (yt.filename)
+            print "Video #" + str(ct) + ": \t"+ str(yt.filename.encode('ascii','ignore'))
             if downloaded(loc,yt.filename):
                 print "\t\tAlready Downloaded \n"
                 continue
-            print "\t\tDownloading ........"
-            print "\t\tDownload Done \n"
             video = yt.filter('mp4')[0] 
+            print "\t\tDownloading ........"
             video.download(loc)
+            print "\t\tDownload Done \n"
         except:
             print "Video #" + str(ct) + ": \t" + "Could Not Download" + "\n"
 
@@ -66,6 +66,11 @@ if __name__ == '__main__':
         1.)Link to the Youtube Playlist (To be downloaded) 
         2.)The location (absolute) where it is to be downloaded
     """
+    print "Please make if you have already run the following: \n"
+    print "\tpip install -r requirements.txt\n"
+    inp = raw_input("Press y to continue OR n to break. [y/n]: ")
+    if inp=='n' or inp=='N':
+        exit()
     url = str(sys.argv[1])
     my_links = parse(url)
     location = str(sys.argv[2])
