@@ -6,6 +6,9 @@ import requests
 def downloaded(loc, filename):
     """ Check if the video is already downloaded in the required folder OR not.
         There is some code that takes care of some encoding issues.
+        
+        loc : location to be checked for the already downloaded video
+        filename : name of the video to be searched 
     """
     filenames = os.listdir(loc)
     filename = str(filename.encode('utf-8','ignore'))
@@ -24,8 +27,9 @@ def downloaded(loc, filename):
  
 def parse(url):
     """ Parse a youtube playlist page to extract links of all videos and return the links as a list.
-    The url of the playlist will be given as input to the function.
+        The url of the playlist will be given as input to the function.
     
+        url : the web address of the Youtube Playlist
     """
     r = requests.get(url)
     soup = BeautifulSoup(r.text, "html.parser")
@@ -36,43 +40,51 @@ def parse(url):
         links.append(link)
     return links
 
-def download_videos(links, loc):
+def download_videos(links, loc, quality):
     """ Download the video in the lowest mp4 quality available and store it in a folder.
         Age-restricted videos are ignored.
         
         The Downloading resumes if there was any interruption last time.
+        
+        links   : list of the links in the Youtube Playlist
+        loc     : file location for the downloading of videos
+        quality : 1 for best quality & 2 for minimum quality
     """
     print "\nPress Ctrl+Z for stopping downloads at any moment.\n"
     print "DOWNLOADING " + str(len(links)) + " VIDEOS \n"
-    ct=0
+    video_count=0
     for link in links:
         try:
-            ct=ct+1
+            video_count=video_count+1
             yt = YouTube(link)
             yt.set_filename(yt.filename)
-            print "Video #" + str(ct) + ": \t"+ str(yt.filename.encode('ascii','ignore'))
+            print "Video #" + str(video_count) + ": \t"+ str(yt.filename.encode('ascii','ignore'))
             if downloaded(loc,yt.filename):
                 print "\t\tAlready Downloaded \n"
                 continue
-            video = yt.filter('mp4')[0] 
+            quality_idx=0
+            if quality==1:
+                quality_idx=-1
+            video = yt.filter('mp4')[quality_idx] 
             print "\t\tDownloading ........"
             video.download(loc)
             print "\t\tDownload Done \n"
         except:
-            print "Video #" + str(ct) + ": \t" + "Could Not Download" + "\n"
+            print "Video #" + str(video_count) + ": \t" + "Could Not Download" + "\n"
 
 if __name__ == '__main__':
     """ Two Command line arguments expected :
         1.)Link to the Youtube Playlist (To be downloaded) 
         2.)The location (absolute) where it is to be downloaded
     """
-    print "Please make if you have already run the following: \n"
+    print "Please make sure if you have already run the following: \n"
     print "\tpip install -r requirements.txt\n"
     inp = raw_input("Press y to continue OR n to break. [y/n]: ")
     if inp=='n' or inp=='N':
         exit()
+    quality_inp = int(raw_input("Type 1 for Downloading in maximum quality OR 2 for minimum quality : "))
     url = str(sys.argv[1])
     my_links = parse(url)
     location = str(sys.argv[2])
     location.replace('\\','/')
-    download_videos(my_links, location)
+    download_videos(my_links, location, quality_inp)
