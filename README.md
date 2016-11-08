@@ -1,6 +1,7 @@
 # Youtube-Playlist-Downloader
 
 This is a python script which one by one downloads all the videos of a YouTube Playlist in a specified folder. 
+The videos can be downloaded both in best quality available (720p) Or the minimum quality.
 
 Usage
 ============
