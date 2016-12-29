@@ -2,6 +2,7 @@ import sys, imp, os
 from bs4 import BeautifulSoup
 from pytube import YouTube
 import requests 
+from urlparse import urljoin
 
 def downloaded(loc, filename):
     """ Check if the video is already downloaded in the required folder OR not.
@@ -33,10 +34,11 @@ def parse(url):
     """
     r = requests.get(url)
     soup = BeautifulSoup(r.text, "html.parser")
-    a_tags = soup.find_all("a",{"class":"yt-uix-tile-link"})
+    a_tags = soup.find_all("a",{"class":["yt-uix-tile-link","playlist-video"]})
     links = []
+    base_href = "https://www.youtube.com"
     for ele in a_tags:
-        link="https://www.youtube.com"+str(ele.get('href'))
+        link=urljoin(base_href,str(ele.get('href')))
         links.append(link)
     return links
 
